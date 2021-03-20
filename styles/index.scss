@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'iconfont';  /* project id 1556244 */
-    src: url('https://at.alicdn.com/t/font_2406838_q4buybxyym.ttf') format('truetype');
+    src: url('https://at.alicdn.com/t/font_2406838_tt7up8e228c.ttf') format('truetype');
   }
 @font-face {
     font-family: 'SHS';
@@ -57,13 +57,6 @@
 		box-sizing: border-box;
 		-webkit-overflow-scrolling: touch;
 	}
-	/* 骨架屏替代方案 */
-	.Skeleton {
-		background: #f3f3f3;
-		padding: 20upx 0;
-		border-radius: 8upx;
-	}
-
 	/* 图片载入替代方案 */
 	.image-wrapper {
 		font-size: 0;
@@ -136,7 +129,7 @@
 		background: $button-color-primary;
 	}
 	.button-hover[type=primary] {
-	    background-color: $button-color-primary-hover;
+	    opacity: .8;
 	}
 	/* input 样式 */
 	.input-placeholder {

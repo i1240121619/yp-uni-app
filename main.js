@@ -6,19 +6,24 @@ import uView from "uview-ui"
 import tool from './common/tool'
 import { Base64 } from 'js-base64'
 
+import MescrollBody from "@/components/mescroll-diy/beibei/mescroll-body.vue"
 
-import '@/styles/animate.css' // global css
-import '@/styles/index.scss' // global css
-
+Vue.component('mescroll-body', MescrollBody)
 Vue.use(uView)
 Vue.prototype.$http = tool.http
 Vue.prototype.$checkLogin = tool.checkLogin
 Vue.prototype.$Base64 = Base64
 Vue.prototype.$findIndex = tool.findIndex
+Vue.prototype.$findItem = tool.findItem
 Vue.prototype.$wordbook = tool.wordbook
 Vue.prototype.$getLocal = tool.getLocal
 Vue.prototype.$addLocal = tool.addLocal
 Vue.prototype.$saveLocal = tool.saveLocal
+
+Vue.prototype.$getUserInfo = tool.getUserInfo
+Vue.prototype.$getUni = tool.getUni 
+Vue.prototype.$getCurrent = tool.getCurrent
+Vue.prototype.$getOsInfo = tool.getOsInfo
 
 Vue.prototype.$onLaunched = new Promise(resolve => {
     Vue.prototype.$isResolve = resolve

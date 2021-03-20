@@ -3,19 +3,13 @@ import config from './config';
 export default {
 	http(url1, method, data1, header1) {
 		let url = url1.indexOf('http') != -1 ? url1 : config.baseUrl + url1;
-		let token = uni.getStorageSync('access_token');
+		let token = uni.getStorageSync('userToken');
 		let header = {
 			"content-type": header1 || "application/json",
-			"CTR_VERSION": config.baseUrl.indexOf("apis-lgcs") !== -1 ? 'DOCKER' : 'DOCKER',
-			"XXX_SHOP_XXX": uni.getStorageSync('storeInfo') ? uni.getStorageSync('storeInfo').shopId : '',
-			"XXX_CHAIN_XXX": uni.getStorageSync('wordbook') ? uni.getStorageSync('wordbook').chainInfo.chainId : '',
+			"CTR_VERSION": 'DOCKER'
 		}
-		if (url1.indexOf('/auth/member/token') !== -1) {
-			header['Authorization'] = 'Basic bWFsbDptYWxs'; // token
-		} else {
-			if (token) {
-				header['Authorization'] = 'Bearer ' + token;
-			}
+		if (token) {
+			header['token'] = token;
 		}
 		let data
 		if (navigator) {
@@ -32,7 +26,7 @@ export default {
 				success: function(result) {
 					let data1 = result.data
 					if (data1.data === "invalid_token") {
-						uni.removeStorageSync('access_token')
+						uni.removeStorageSync('userToken')
 						uni.reLaunch({
 							url: `/pages/index/index`
 						});
@@ -48,7 +42,7 @@ export default {
 	},
 	checkLogin(form, type) {
 		if (!type) return;
-		if (!uni.getStorageSync('access_token')) {
+		if (!uni.getStorageSync('userToken')) {
 			// 判断有没有登陆
 			this.$getUni()[type]({
 				url: '/pages/login/login?from=' + form + '&type=' + type
@@ -273,9 +267,11 @@ export default {
 		return null;
 	}, // 获取url 参数
 	getUserInfo(callback) {
-		if (!uni.getStorageSync('access_token')) return
-		this.$http('/custom/front/member/info', 'GET').then((res) => {
-			if (!res.code) { // 获取个人信息
+		if (!uni.getStorageSync('userToken')) return
+		this.$http('/user/auth/user/ext/view', 'POST', {
+			noLoading: true
+		}).then((res) => {
+			if (res.code === 200) { // 获取个人信息
 				let data = res.data
 				uni.setStorageSync('userInfo', data)
 				this.userInfo = uni.getStorageSync('userInfo')
@@ -283,7 +279,7 @@ export default {
 					callback()
 				}
 			} else {
-				uni.removeStorageSync('access_token')
+				uni.removeStorageSync('userToken')
 				let pages = getCurrentPages()
 				let page = pages[pages.length - 1]
 				page.onLoad()
@@ -341,4 +337,64 @@ export default {
 		let stamp = new Date(str.replace(/-/g, '/')).getTime() / 1000;
 		return stamp;
 	}, // 2019-06-03 17:24:43 -> 1425553097
+	getOsInfo() {
+		const userAgent = navigator.userAgent.toLowerCase()
+		let name = 'Unknown'
+		let version = 'Unknown'
+		if (userAgent.indexOf('win') > -1) {
+			name = 'Windows'
+			if (userAgent.indexOf('windows nt 5.0') > -1) {
+				version = 'Windows 2000'
+			} else if (
+				userAgent.indexOf('windows nt 5.1') > -1 ||
+				userAgent.indexOf('windows nt 5.2') > -1
+			) {
+				version = 'Windows XP'
+			} else if (userAgent.indexOf('windows nt 6.0') > -1) {
+				version = 'Windows Vista'
+			} else if (
+				userAgent.indexOf('windows nt 6.1') > -1 ||
+				userAgent.indexOf('windows 7') > -1
+			) {
+				version = 'Windows 7'
+			} else if (
+				userAgent.indexOf('windows nt 6.2') > -1 ||
+				userAgent.indexOf('windows 8') > -1
+			) {
+				version = 'Windows 8'
+			} else if (userAgent.indexOf('windows nt 6.3') > -1) {
+				version = 'Windows 8.1'
+			} else if (
+				userAgent.indexOf('windows nt 6.2') > -1 ||
+				userAgent.indexOf('windows nt 10.0') > -1
+			) {
+				version = 'Windows 10'
+			} else {
+				version = 'Unknown'
+			}
+		} else if (userAgent.indexOf('iphone') > -1) {
+			name = 'Iphone'
+		} else if (userAgent.indexOf('mac') > -1) {
+			name = 'Mac'
+		} else if (
+			userAgent.indexOf('x11') > -1 ||
+			userAgent.indexOf('unix') > -1 ||
+			userAgent.indexOf('sunname') > -1 ||
+			userAgent.indexOf('bsd') > -1
+		) {
+			name = 'Unix'
+		} else if (userAgent.indexOf('linux') > -1) {
+			if (userAgent.indexOf('android') > -1) {
+				name = 'Android'
+			} else {
+				name = 'Linux'
+			}
+		} else {
+			name = 'Unknown'
+		}
+		return {
+			name,
+			version
+		}
+	} // 获取系统信息
 };

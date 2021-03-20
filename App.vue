@@ -1,10 +1,14 @@
 <script>
 	export default {
 		globalData: {
-			statusBarHeight: null, //状态栏高度
-			topbarHeight: null //包括状态栏总高度
+			statusBarHeight: 20 //状态栏高度
 		},
 		onLaunch: function() {
+			// #ifdef APP-PLUS
+			// 锁定横屏  
+			// plus.screen.lockOrientation("landscape-primary");  
+			// 锁定竖屏  
+			plus.screen.lockOrientation("portrait-primary"); 
 			// this.$wordbook((res) => {
 			// 	if (res.every((e) => e === 1)) {
 			// 		this.$isResolve()
@@ -12,10 +16,15 @@
 			// 		this.$message.error('数据初始化失败')
 			// 	}
 			// })
-			uni.getSystemInfo({ //获取系统信息
-				success: e => {
-					this.globalData.statusBarHeight = e.statusBarHeight
-					this.globalData.topbarHeight = e.statusBarHeight + 44
+			// #endif
+			this.$http('https://gateway.doityun.com/ip/info', 'GET').then((res) => {
+				if (res.code === 200) {
+					uni.setStorageSync('IPInfo', res.data)
+				} else {
+					uni.showToast({
+						title: res.msg,
+						icon: 'none'
+					})
 				}
 			})
 			// #ifdef MP-WEIXIN
@@ -53,14 +62,40 @@
 			});
 			// #endif
 		},
-		onShow: function() {},
+		onShow: function() {
+			this.$http('/system/api/website/get', 'POST', {
+				platShow: 2
+			}).then((result) => {
+				if (result.code === 200) {
+					uni.setStorageSync('website', result.data)
+					// #ifdef MP-WEIXIN
+					uni.getSystemInfo({
+						success: res => {
+							let system = res.system.toUpperCase(); // console.log(system)
+							if (system.includes('IOS')) {
+								uni.setStorageSync('systemType', 'IOS');
+							} else {
+								uni.setStorageSync('systemType', 'Android');
+							}
+						}
+					});
+					// #endif
+				} else {
+					uni.showToast({
+						title: res.msg,
+						icon: 'none'
+					})
+				}
+			})
+		},
 		onHide: function() {
 			// console.log('App Hide')
 		},
 		methods: {}
 	}
 </script>
-<style lang="scss">
-	/* 注意要写在第一行，同时给style标签加入lang="scss"属性 */
+<style lang='scss'>
+	@import 'styles/animate.css';
+	@import 'styles/index.scss';
 	@import "uview-ui/index.scss";
 </style>

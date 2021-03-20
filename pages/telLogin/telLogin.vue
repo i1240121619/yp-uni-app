@@ -1,13 +1,11 @@
 <template>
 	<view class="container">
 		<view class='header'>
-			<image src='../../static/logo.png'></image>
-		</view>
-		<view class='header-text'>
-			<text>六谷大药房</text>
+			<image src='/static/logo.png'></image>
 		</view>
 		<view class='content'>
 			<view class="tel">
+				<view class="tel-0">+86</view>
 				<view class="tel-1">
 					<input v-model="phone" maxlength="11" placeholder="请输入手机号码" />
 				</view>
@@ -20,19 +18,21 @@
 					</view>
 				</view>
 				<view class="verification-code">
-					<view v-show="show" class="form-item-right"><button class="getUserInfo" open-type="getUserInfo" @getuserinfo="userInfo"><text
-						v-show="show1">获取验证码</text><text v-show="!show1">重发验证码</text></button></view>
+					<view v-show="show" class="form-item-right"><button class="getUserInfo" @click="getUserInfo"><text
+								v-show="show1">获取验证码</text><text v-show="!show1">重发验证码</text></button></view>
 					<view v-show="!show" class="form-item-right">{{count}}s</view>
 				</view>
 			</view>
 		</view>
 		<view class='btn'>
-			<button type='primary' @click="wxLogin">
-				确定
+			<button type='primary' @click="wxLogin" @keyup.enter="wxLogin" :disabled='!phone'>
+				登录
 			</button>
 		</view>
-		<view class='xy'>
-			<view>点击确定，即表示已阅读并同意<span class="xy1" @click="serviceTerms">《注册会员服务条款》</span><span class="xy1" @click="payTerms">《支付协议》</span></view>
+		<view class="quickLogon" @click="quickLogon">微信一键登录</view>
+		<view class='tip'>
+			<view>登录注册即表明您已同意<span class="xy1" @click="userTerms">《用户协议》</span>和<span class="xy1"
+					@click="privacyTerms">《隐私政策》</span></view>
 		</view>
 	</view>
 </template>
@@ -54,51 +54,29 @@
 				count: '',
 				timer: '',
 				show: true,
-				show1: true,
-				userAll: '',
-				shopId: ''
+				show1: true
 			}
 		},
 		onLoad(option) {
-			this.loginType = option.loginType // 1:一键登陆/2:手机登陆
+			this.loginType = option.loginType // 1:一键登陆绑定/2:手机登陆
 			this.fromBase64 = option.from ? option.from : this.$Base64.encodeURI('/pages/index/index')
 			this.from = option.from ? this.$Base64.decode(option.from) : '/pages/index/index'
 			this.type = option.type || 'reLaunch'
-			this.phone = option.phone === 'null' ? '' : option.phone
-			if (option.q) {
-				let url = decodeURIComponent(option.q)
-				this.shopId = this.$getQueryString(url, 'shopId') || ''
-				this.loginType = '2'
-				// uni.showToast({
-				// 	title: this.shopId,
-				// 	icon: 'none',
-				// 	duration: 100000
-				// })
-			}
 		},
 		methods: {
-			userInfo() {
+			quickLogon() {
+				uni.navigateBack()
+			},
+			getUserInfo() {
 				let _this = this;
-				uni.getUserInfo({
-					provider: 'weixin',
-					success: (e) => {
-						_this.userAll = e
-						if (!_this.phone || !reg.tel_reg.test(_this.phone)) {
-							uni.showToast({
-								title: '手机号码不能为空或不正确',
-								icon: 'none'
-							})
-							return
-						}
-						_this.getCodeAjax()
-					},
-					fail: (err) => {
-						uni.showToast({
-							title: '微信授权登陆失败',
-							icon: 'none'
-						})
-					}
-				});
+				if (!_this.phone || !reg.tel_reg.test(_this.phone)) {
+					uni.showToast({
+						title: '手机号码不能为空或不正确1',
+						icon: 'none'
+					})
+					return
+				}
+				_this.getCodeAjax()
 			},
 			wxLogin() {
 				let _this = this;
@@ -114,28 +92,6 @@
 					fail(err) {
 						uni.showToast({
 							title: '微信授权登陆失败',
-							icon: 'none'
-						})
-					}
-				})
-			},
-			chooseStore() {
-				let _this = this;
-				let data = {
-					shopId: _this.shopId
-				};
-				_this.$http('/custom/mallShop/getPickUpShop', 'GET', data).then((res) => {
-					if (!res.code) { // 成功
-						_this.$getUserInfo(() => {
-							uni.hideLoading()
-							uni.reLaunch({
-								url: '/pages/index/index'
-							})
-						})
-					} else {
-						uni.hideLoading()
-						uni.showToast({
-							title: res.msg,
 							icon: 'none'
 						})
 					}
@@ -164,22 +120,32 @@
 					})
 					return
 				}
+				if (_this.loginType === 1) {
+					_this.xcxBinding()
+				} else {
+					_this.codeLogon()
+				}
+			},
+			codeLogon() {
+				let _this = this;
+				let ipInfo = uni.getStorageSync('IPInfo');
+				let data = {
+					browser: 'mp-weixin',
+					city: ipInfo.city,
+					clientType: 4,
+					code: _this.phoneCode,
+					loginIp: ipInfo.ip,
+					mobile: _this.phone,
+					os: uni.getStorageSync('systemType'),
+					province: ipInfo.pro
+				};
 				uni.showLoading({
 					title: '请稍等'
 				})
-				let data = {
-					appId: config.appId,
-					extra: _this.loginType === '1' ? _this.userAll.iv : '',
-					phone: _this.phone,
-					phoneCode: _this.phoneCode,
-					code: _this.code,
-					data: _this.loginType === '1' ? _this.userAll.encryptedData : '',
-					social_type: _this.loginType === '1' ? 'WX_XCX_BIND' : 'WX_XCX_PHONE' // WX_XCX_BIND：一键登录/WX_XCX_PHONE：手机号码登陆
-				};
-				_this.$http('/auth/member/token', 'POST', data, 'application/x-www-form-urlencoded')
+				_this.$http('/service-user/user/api/user/login/code', 'POST', data)
 					.then((res) => {
-						if (!res.code) {
-							uni.setStorageSync('access_token', res.data.access_token)
+						if (res.code === 200) {
+							uni.setStorageSync('userToken', res.data.token)
 							_this.$getUserInfo(() => {
 								uni.hideLoading()
 								uni[_this.type]({
@@ -194,6 +160,45 @@
 							})
 						}
 					})
+			},
+			xcxBinding() {
+				let _this = this;
+				let data = {
+					timestamp: new Date().getTime(),
+					uniconId: uni.getStorageSync('wxUniCode'),
+					sign: md5.hexMD5( _this.phoneCode + new Date().getTime() + uni.getStorageSync('wxUniCode') +  _this.phone)
+				};
+				uni.showLoading({
+					title: '请稍等'
+				})
+				_this.$http('/user/api/user/xcx/xcxBinding', 'POST', data)
+					.then((res) => {
+						if (res.code === 200) {
+							uni.setStorageSync('userToken', res.data.token)
+							_this.$getUserInfo(() => {
+								uni.hideLoading()
+								uni[_this.type]({
+									url: _this.from
+								});
+							})
+						} else {
+							uni.hideLoading()
+							uni.showToast({
+								title: res.msg,
+								icon: 'none'
+							})
+						}
+					})
+			},
+			userTerms() {
+				uni.navigateTo({
+					url: '/pagesA/terms/userTerms'
+				});
+			},
+			privacyTerms() {
+				uni.navigateTo({
+					url: '/pagesA/terms/privacyTerms'
+				});
 			},
 			serviceTerms() {
 				uni.navigateTo({
@@ -229,10 +234,10 @@
 				uni.showLoading({
 					title: '请稍等'
 				})
-				this.$http(`/custom/check_code/phone/open/member/login/${this.phone}?appId=${config.appId}`, 'GET', {})
+				this.$http(`/service-user/user/api/user/send/code`, 'POST', {mobile: this.phone})
 					.then((res) => {
 						uni.hideLoading()
-						if (!res.code) {
+						if (res.code === 200) {
 							uni.showToast({
 								title: '短信验证码已发送',
 								icon: 'none'
@@ -250,7 +255,7 @@
 	}
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 	page {
 		background: #fff;
 	}
@@ -273,15 +278,9 @@
 	}
 
 	.header image {
-		width: 150rpx;
-		height: 150rpx;
+		width: 200rpx;
+		height: 200rpx;
 		border-radius: 50%
-	}
-
-	.header-text {
-		text-align: center;
-		margin-top: 20rpx;
-		color: #333333;
 	}
 
 	.btn {
@@ -289,15 +288,23 @@
 	}
 
 	.btn button {
-		border-radius: 65rpx;
+		border-radius: 66rpx;
+	}
+
+	.btn button[disabled][type=primary] {
+		background: #C4C4C4;
+	}
+
+	.btn .button-hover {
+		background: #002F87;
+		opacity: .8;
 	}
 
 	.tel,
-	.telcode {
-		background: rgba(246, 246, 246, 1);
-		padding: 15rpx 0;
+	.telcodeall {
+		padding: 16rpx 0;
 		position: relative;
-		border-radius: 34rpx;
+		border-bottom: 1px solid #F3F3F3;
 	}
 
 	.telcodeall {
@@ -321,6 +328,7 @@
 		padding: 0;
 		background: none;
 		line-height: normal;
+		height: 60rpx;
 	}
 
 	.getUserInfo:after {
@@ -329,41 +337,74 @@
 	}
 
 	.verification-code {
-		width: 200rpx;
+		width: 192rpx;
+		height: 60rpx;
+		background: #F3F3F3;
+		border: 1px solid #666666;
+		box-sizing: border-box;
+		border-radius: 100rpx;
 		position: absolute;
-		top: 16rpx;
+		top: 0px;
 		right: 0;
 		text-align: center;
 	}
 
+	.quickLogon {
+		font-size: 28rpx;
+		line-height: 40rpx;
+		text-align: center;
+		color: #002F87;
+		margin-top: 40rpx;
+	}
+
+
 	.form-item-right button.getUserInfo text {
 		cursor: pointer;
 		text-align: center;
-		color: $button-color-primary;
-		font-size: 32rpx;
-		padding: 10rpx 15rpx;
+		font-size: 28rpx;
+		color: #333333;
+		line-height: 56rpx;
+		padding: 10rpx 16rpx;
 	}
 
 	.form-item-right {
-		color: $button-color-primary;
+		color: #333333;
+		height: 60rpx;
+		line-height: 56rpx;
 	}
 
-	.tel-1 {
-		padding-left: 40rpx;
+	.tel-0 {
+		position: absolute;
+		top: 24rpx;
+		left: 30rpx;
+		color: #333333;
+		font-size: 32rpx;
+	}
+
+	.tel .tel-1 {
+		padding-left: 100rpx;
 		padding-right: 80rpx;
 	}
 
-	.telcode {
-		width: 450rpx;
+	.telcodeall .tel-1 {
+		padding-left: 20rpx;
 	}
 
-	.xy {
+	.tip {
+		width: 100%;
+		font-size: 26rpx;
+		line-height: 36rpx;
+		text-align: center;
 		color: #666666;
-		padding: 20rpx 20rpx;
-		font-size: 24rpx;
+		position: absolute;
+		bottom: 40rpx;
+		left: 50%;
+		transform: translateX(-50%);
+		padding: 0 50rpx;
+		white-space:nowrap;
 	}
 
 	.xy1 {
-		color: #61A4EE;
+		color: #002F87;
 	}
 </style>

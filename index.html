@@ -3,20 +3,15 @@
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 		<title>
 			<%= htmlWebpackPlugin.options.title %>
 		</title>
 		<script>
-			function fontSize() {
-				var baseWidth = 375; // 640 750 1080 设计稿宽度
-				var fontSize = (document.documentElement.clientWidth / baseWidth * 100).toFixed(2);  // 100px/100 = 0.1rem 换算公式
-				document.getElementsByTagName("html")[0].style.fontSize = fontSize+"px";
-			}
-			fontSize()
-			window.onresize = function() {
-				fontSize()
-			}
+		    document.addEventListener('DOMContentLoaded', function() {
+		        document.documentElement.style.fontSize = document.documentElement.clientWidth / 20 + 'px'
+		    })
+		    var coverSupport = 'CSS' in window && typeof CSS.supports === 'function' && (CSS.supports('top: env(a)') || CSS.supports('top: constant(a)'))
+		    document.write('<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0' + (coverSupport ? ', viewport-fit=cover' : '') + '" />')
 		</script>
 		<link rel="stylesheet" href="<%= BASE_URL %>static/index.<%= VUE_APP_INDEX_CSS_HASH %>.css" />
 		<!-- 微信 JS-SDK 如果不需要兼容小程序，则无需引用此 JS 文件。 -->
