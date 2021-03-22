@@ -1,8 +1,8 @@
 <template>
-	<view class="index">
+	<view class="index u-skeleton">
 		<view class="headerbar" :style="{backgroundImage:'url(' + require('@/static/tbj.jpg') + ')'}">
-			<headerbar></headerbar>
-			<view class="ss flex up-center">
+			<headerbar class="u-skeleton-rect"></headerbar>
+			<view class="ss flex up-center u-skeleton-fillet">
 				<view class="ssIcon">
 					<image src="@/static/ss.png" />
 				</view>
@@ -10,14 +10,13 @@
 			</view>
 			<view class="topYj"></view>
 		</view>
-		<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" top="280"
-			bottom="100">
-			<view class="banner">
+		<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" @up="upCallback" top="280rpx"
+			bottom="100rpx">
+			<view class="banner u-skeleton-fillet">
 				<swiper class="swiper" @change="changeSwiper" :autoplay="true" circular=true :interval="3000"
 					:duration="500">
 					<swiper-item class="swiper-item" v-for="(item, index) in 5" :key="index">
-						<image src="https://imgd.hnhcyy.com/ctr_cloud/liugu/zt/productScan/Rectangle-7.jpg?1"
-							@click="go(item)" />
+						<u-lazy-load @click="go(item)" img-mode="widthFix" image="https://imgd.hnhcyy.com/ctr_cloud/liugu/zt/productScan/Rectangle-7.jpg?1" loading-img="/static/bannerpicloading.jpg" error-img="/static/bannerpicloading.jpg"></u-lazy-load>
 					</swiper-item>
 				</swiper>
 				<view class="qiehuan">
@@ -33,71 +32,71 @@
 			<view class="dht">
 				<view class="dht1 flex">
 					<view class="dht-item">
-						<view class="dht-item-pic">
+						<view class="dht-item-pic u-skeleton-circle">
 							<image src="@/static/icon1.png" />
 						</view>
-						<view class="dht-item-txt">课程专区</view>
+						<view class="dht-item-txt u-skeleton-rect">课程专区</view>
 					</view>
 					<view class="dht-item">
-						<view class="dht-item-pic">
+						<view class="dht-item-pic u-skeleton-circle">
 							<image src="@/static/icon2.png" />
 						</view>
-						<view class="dht-item-txt">慢病专区</view>
+						<view class="dht-item-txt u-skeleton-rect">慢病专区</view>
 					</view>
 					<view class="dht-item">
-						<view class="dht-item-pic">
+						<view class="dht-item-pic u-skeleton-circle">
 							<image src="@/static/icon3.png" />
 						</view>
-						<view class="dht-item-txt">精英店长</view>
+						<view class="dht-item-txt u-skeleton-rect">精英店长</view>
 					</view>
 					<view class="dht-item">
-						<view class="dht-item-pic">
+						<view class="dht-item-pic u-skeleton-circle">
 							<image src="@/static/icon4.png" />
 						</view>
-						<view class="dht-item-txt">行业解读</view>
+						<view class="dht-item-txt u-skeleton-rect">行业解读</view>
 					</view>
 					<view class="dht-item">
-						<view class="dht-item-pic">
+						<view class="dht-item-pic u-skeleton-circle">
 							<image src="@/static/icon5.png" />
 						</view>
-						<view class="dht-item-txt">中药专区</view>
+						<view class="dht-item-txt u-skeleton-rect">中药专区</view>
 					</view>
 					<view class="dht-item">
-						<view class="dht-item-pic">
+						<view class="dht-item-pic u-skeleton-circle">
 							<image src="@/static/icon6.png" />
 						</view>
-						<view class="dht-item-txt">免费专区</view>
+						<view class="dht-item-txt u-skeleton-rect">免费专区</view>
 					</view>
 					<view class="dht-item">
-						<view class="dht-item-pic">
+						<view class="dht-item-pic u-skeleton-circle">
 							<image src="@/static/icon7.png" />
 						</view>
-						<view class="dht-item-txt">行业资讯</view>
+						<view class="dht-item-txt u-skeleton-rect">行业资讯</view>
 					</view>
 					<view class="dht-item">
-						<view class="dht-item-pic">
+						<view class="dht-item-pic u-skeleton-circle">
 							<image src="@/static/icon8.png" />
 						</view>
-						<view class="dht-item-txt">医药智库</view>
+						<view class="dht-item-txt u-skeleton-rect">医药智库</view>
 					</view>
 					<view class="dht-item">
-						<view class="dht-item-pic">
+						<view class="dht-item-pic u-skeleton-circle">
 							<image src="@/static/icon9.png" />
 						</view>
-						<view class="dht-item-txt">恒昌简介</view>
+						<view class="dht-item-txt u-skeleton-rect">恒昌简介</view>
 					</view>
 					<view class="dht-item">
-						<view class="dht-item-pic">
+						<view class="dht-item-pic u-skeleton-circle">
 							<image src="@/static/icon10.png" />
 						</view>
-						<view class="dht-item-txt">学员故事</view>
+						<view class="dht-item-txt u-skeleton-rect">学员故事</view>
 					</view>
 				</view>
 			</view>
 			<view class="box box1">
 				<view class="box-padding">
 					<view class="box-t flex">
-						<view class="box-t-left flex up-center">
+						<view class="box-t-left flex up-center u-skeleton-rect">
 							<view class="box-t-left-1">
 								课程专题
 							</view>
@@ -106,17 +105,24 @@
 								50讲
 							</view>
 						</view>
-						<view class="box-t-right flex up-center" @click="goAll">
+						<view class="box-t-right flex up-center u-skeleton-rect" @click="goAll">
 							<view class="box-t-right1">查看全部</view>
 							<view class="box-t-right2 iconfont">&#xe613;</view>
 						</view>
 					</view>
 					<view class="box-c">
-
+						<view class="rowOneBig-item u-skeleton-rect" v-for="(item, index) in 3" :key="index">
+							<rowOneBig></rowOneBig>
+						</view>
 					</view>
 				</view>
 			</view>
+			<view class="line"></view>
+			<view class="box box2">
+				1212
+			</view>
 		</mescroll-body>
+		<u-skeleton :loading="loading" :animation="true" bgColor="#FFF"></u-skeleton>
 	</view>
 </template>
 
@@ -124,18 +130,26 @@
 	import headerbar from "@/components/headerbar/headerbar";
 	import mescrollBody from "@/components/mescroll-diy/beibei/mescroll-body.vue";
 	import MescrollMixin from "@/components/mescroll-uni/mescroll-mixins.js";
+	import rowOneBig from "@/components/card/rowOneBig";
 
 	export default {
 		mixins: [MescrollMixin], // 使用mixin (在main.js注册全局组件)
 		components: {
 			headerbar,
-			mescrollBody // 避免与main.js注册的全局组件名称相同,否则注册组件失效(iOS真机 APP HBuilderX2.7.9)
+			mescrollBody, // 避免与main.js注册的全局组件名称相同,否则注册组件失效(iOS真机 APP HBuilderX2.7.9)
+			rowOneBig
 		},
 		data() {
 			return {
+				loading: true, // 是否显示骨架屏组件
 				advList: null,
 				swiperCurrent: 0
 			}
+		},
+		mounted() {
+			 setTimeout(() => {
+				 this.loading = false // 模拟请求
+			 }, 2000);
 		},
 		components: {
 
@@ -172,7 +186,7 @@
 		position: fixed;
 		top: 0;
 		left: 0;
-		z-index: 9999;
+		z-index: 999;
 		background-size: cover;
 		background-position: center top;
 		background-repeat: no-repeat;
@@ -220,6 +234,7 @@
 		.swiper {
 			width: 100%;
 			height: 296rpx;
+			background-color: #010F44;
 			border-radius: 12rpx;
 			overflow: hidden;
 
@@ -313,12 +328,7 @@
 		}
 
 		.box-padding {
-			font-weight: 600;
-			font-size: 16px;
-			line-height: 22px;
-			color: #333333;
 			padding: 40rpx 30rpx;
-
 			.box-t {
 				justify-content: space-between;
 				-webkit-justify-content: space-between;
@@ -347,8 +357,20 @@
 			}
 
 			.box-c {
-				height: 800px;
+				.rowOneBig-item:last-child{
+					border-bottom: none;
+				}
+				.rowOneBig-item{
+					padding-bottom: 32rpx;
+					margin-top: 32rpx;
+					border-bottom: 1px solid #F3F3F3;	
+				}
 			}
 		}
+	}
+	.line{
+		width: 100%;
+		height: 16rpx;
+		background: #F3F3F3;
 	}
 </style>

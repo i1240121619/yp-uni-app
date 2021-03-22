@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<view class="home" :class="[jumpScrollBarFinished ? '' : 'transparent']">
+		<view class="home" :class="[jumpScrollBarFinished ? 'transparent' : '']">
 			<!-- 已登录,企业用户首页1 -->
 			<view v-if="$findItem(tabArr, currentPageName, 'pageName')" v-show="currentPageName === 'index'">
 				<index ref="index"></index>
@@ -130,7 +130,13 @@
 </script>
 
 <style lang='scss'>
+	.home{
+		opacity: 0;
+	}
 	.transparent{
-		visibility: hidden
+		transition: all .3s ease-in;
+		-webkit-transition: all .3s ease-in;
+		opacity: 1;
 	}
 </style>
+

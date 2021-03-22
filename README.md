@@ -1,4 +1,4 @@
-# yp-uni-app 懒人脚手架
+# yp-uni-app 懒人脚手架  qq:1240121619
 
 #### 安装依赖
 ```
@@ -32,6 +32,9 @@ uView UI 网址：https://www.uviewui.com/components/intro.html
 
 #### 支持底部自定义tabbar点击时，切换页面内容，点击一个加载一个，加载过的无需重新再次重新加载  优化页面列表过长渲染速度
 
-#### 支持骨架屏
+#### 支持图片LazyLoad懒加载使用的场景为：页面有很多图片时，导致页面卡顿，各个位置的图片出现前后不一致等(https://www.uviewui.com/components/lazyLoad.html)
+
+#### 支持自定义骨架屏(https://www.uviewui.com/components/skeleton.html)
 
 #### 支持组件内部的onShow/onPageScroll/onPullDownRefresh/onReachBottom事件等生命周期函数
+

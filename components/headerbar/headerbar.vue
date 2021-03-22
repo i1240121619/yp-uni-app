@@ -19,6 +19,7 @@
 		},
 		data() {
 			return {
+				loading: true, // 是否显示骨架屏组件
 				statusBarHeight: app.globalData.statusBarHeight
 			}
 		},
